@@ -3,21 +3,31 @@
 import { useMemo, useState, useEffect } from 'react';
 import { OpenTxEvent } from '@/lib/types';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
-import { TrendingUp, Wallet, DollarSign, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingUp, Wallet, DollarSign, ArrowUpRight, ArrowDownRight, Info, HelpCircle, RefreshCw } from 'lucide-react';
 
 interface AnalyticsProps {
     events: OpenTxEvent[];
     chain: string;
+    address: string;
 }
 
-export function Analytics({ events, chain }: AnalyticsProps) {
-    const [price, setPrice] = useState<number | null>(null);
+type AccountState = {
+    freeDot: string;
+    reservedDot: string;
+    lockedDot: string;
+    totalDot: string;
+} | null;
 
-    // Fetch Price (Simple implementation)
+export function Analytics({ events, chain, address }: AnalyticsProps) {
+    const [price, setPrice] = useState<number | null>(null);
+    const [accountState, setAccountState] = useState<AccountState>(null);
+    const [accountLoading, setAccountLoading] = useState(false);
+    const [accountError, setAccountError] = useState<string | null>(null);
+
+    // Fetch Price
     useEffect(() => {
         const fetchPrice = async () => {
             try {
-                // Determine CoinGecko ID
                 const coinId = chain === 'polkadot' ? 'polkadot' : 'kusama';
                 const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`);
                 const data = await res.json();
@@ -29,109 +39,180 @@ export function Analytics({ events, chain }: AnalyticsProps) {
         fetchPrice();
     }, [chain]);
 
-    // Calculate Balance History & Stats
-    const { chartData, currentBalance, totalSent, totalReceived } = useMemo(() => {
-        let balance = 0;
-        let sent = 0;
-        let received = 0;
+    // Fetch On-Chain Account State
+    const fetchAccountState = async () => {
+        if (!address) return;
+        setAccountLoading(true);
+        setAccountError(null);
+        try {
+            const res = await fetch('/api/polkadot/account', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address }),
+            });
+            const data = await res.json();
+            if (data.error && !data.totalDot) {
+                setAccountError(data.error);
+            } else {
+                setAccountState(data);
+            }
+        } catch (e: any) {
+            setAccountError(e.message || 'Failed to fetch');
+        } finally {
+            setAccountLoading(false);
+        }
+    };
 
-        // Process chronologically (Oldest first)
+    useEffect(() => {
+        if (address && events.length > 0) {
+            fetchAccountState();
+        }
+    }, [address, events.length]);
+
+    // Calculate Tax-Relevant Balance from Events
+    const { taxBalance, totalReceived, totalSent, totalFees, chartData } = useMemo(() => {
+        let received = 0;
+        let sent = 0;
+        let fees = 0;
+        let runningBalance = 0;
+
         const sorted = [...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
         const history = sorted.map(e => {
             const inAmt = parseFloat(e.receivedQty || '0');
             const outAmt = parseFloat(e.sentQty || '0');
-            const fee = parseFloat(e.feeAmount || '0');
+            const feeAmt = parseFloat(e.feeAmount || '0');
 
             received += inAmt;
-            sent += outAmt; // Fee is usually included in sent quantity or separate? 
-            // In OpenTxEvent normalization, sentQty is the transfer amount. 
-            // If user paid fee, it's separate feeAmount.
+            sent += outAmt;
+            fees += feeAmt;
 
-            // Note: Simplification for chart. 
-            // Real balance logic needs to know initial balance or assume 0 start. 
-            // We assume 0 start for "Account History" or relative change.
-            balance = balance + inAmt - outAmt - (e.txType === 'fee' ? fee : 0) - (e.txType === 'transfer' && e.sentQty ? fee : 0);
+            runningBalance = runningBalance + inAmt - outAmt - feeAmt;
 
             return {
                 date: new Date(e.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
-                fullDate: e.date,
-                balance: balance < 0 ? 0 : balance, // Prevent negative if history partial
+                balance: Math.max(0, runningBalance),
             };
         });
 
-        // Filter to reasonable points for chart if too large? 
-        // Recharts handles ~1000 ok.
-
         return {
-            chartData: history,
-            currentBalance: balance,
+            taxBalance: received - sent - fees,
+            totalReceived: received,
             totalSent: sent,
-            totalReceived: received
+            totalFees: fees,
+            chartData: history,
         };
     }, [events]);
 
-    const netWorth = price && currentBalance ? (currentBalance * price).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : '---';
-    const netFlow = totalReceived - totalSent;
+    const currentBalanceUsd = accountState && price
+        ? (parseFloat(accountState.totalDot) * price).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+        : null;
+
+    const taxBalanceUsd = price
+        ? (taxBalance * price).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+        : null;
 
     if (events.length === 0) return null;
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
 
-            {/* Stats Column */}
-            <div className="lg:col-span-1 space-y-4">
-                {/* Balance Card */}
+            {/* Two Balance Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                {/* Current Balance (On-chain) */}
                 <div className="p-6 bg-slate-900/50 border border-white/10 rounded-2xl relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <Wallet className="w-16 h-16 text-blue-400" />
-                    </div>
-                    <h3 className="text-slate-400 text-sm font-medium mb-1">Current Balance</h3>
-                    <div className="text-3xl font-bold text-white tracking-tight flex items-end gap-2">
-                        {currentBalance.toFixed(4)} <span className="text-sm text-slate-500 mb-1 font-medium">DOT</span>
-                    </div>
-                    {price && (
-                        <div className="mt-2 text-emerald-400 text-sm font-medium flex items-center gap-1">
-                            <DollarSign className="w-3 h-3" />
-                            {netWorth} USD
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                            <h3 className="text-slate-300 text-sm font-medium">Current Balance</h3>
+                            <div className="relative group/tooltip">
+                                <HelpCircle className="w-3 h-3 text-slate-500 cursor-help" />
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 border border-slate-700 rounded-lg text-xs text-slate-300 opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-20">
+                                    On-chain total from Polkadot account state (free + reserved; locks may reduce spendable). This matches explorer balances.
+                                </div>
+                            </div>
                         </div>
+                        <span className="text-[10px] text-slate-500 uppercase tracking-wider">On-chain</span>
+                    </div>
+
+                    {accountLoading ? (
+                        <div className="flex items-center gap-2 text-slate-400">
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                            <span className="text-sm">Loading...</span>
+                        </div>
+                    ) : accountError ? (
+                        <div className="space-y-2">
+                            <span className="text-slate-500 text-sm">Unavailable</span>
+                            <button onClick={fetchAccountState} className="text-xs text-blue-400 hover:underline flex items-center gap-1">
+                                <RefreshCw className="w-3 h-3" /> Retry
+                            </button>
+                        </div>
+                    ) : accountState ? (
+                        <>
+                            <div className="text-3xl font-bold text-white tracking-tight flex items-end gap-2">
+                                {parseFloat(accountState.totalDot).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                <span className="text-sm text-slate-500 mb-1 font-medium">DOT</span>
+                            </div>
+                            {currentBalanceUsd && (
+                                <div className="mt-2 text-emerald-400 text-sm font-medium">
+                                    ≈ {currentBalanceUsd}
+                                </div>
+                            )}
+                            <div className="mt-3 pt-3 border-t border-white/5 grid grid-cols-2 gap-2 text-xs text-slate-500">
+                                <div>Free: <span className="text-slate-300">{parseFloat(accountState.freeDot).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span></div>
+                                <div>Reserved: <span className="text-slate-300">{parseFloat(accountState.reservedDot).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span></div>
+                            </div>
+                        </>
+                    ) : (
+                        <span className="text-slate-500 text-sm">--</span>
                     )}
                 </div>
 
-                {/* Flow Stats */}
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-slate-900/50 border border-white/5 rounded-2xl">
-                        <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase mb-2">
-                            <ArrowDownRight className="w-3 h-3" /> Received
+                {/* Tax-Relevant Balance (Transfer-derived) */}
+                <div className="p-6 bg-slate-900/50 border border-blue-500/20 rounded-2xl relative overflow-hidden group">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                            <h3 className="text-slate-300 text-sm font-medium">Tax-Relevant Balance</h3>
+                            <div className="relative group/tooltip">
+                                <HelpCircle className="w-3 h-3 text-slate-500 cursor-help" />
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 border border-slate-700 rounded-lg text-xs text-slate-300 opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-20">
+                                    Derived from transfer events only (what openTx exports to Awaken). Does not include staking, reserves, locks, or internal pallet movements.
+                                </div>
+                            </div>
                         </div>
-                        <div className="text-lg font-semibold text-slate-200">
-                            {totalReceived.toFixed(2)}
-                        </div>
+                        <span className="text-[10px] text-blue-400 uppercase tracking-wider">CSV-based</span>
                     </div>
-                    <div className="p-4 bg-slate-900/50 border border-white/5 rounded-2xl">
-                        <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase mb-2">
-                            <ArrowUpRight className="w-3 h-3" /> Sent
+
+                    <div className="text-3xl font-bold text-white tracking-tight flex items-end gap-2">
+                        {taxBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                        <span className="text-sm text-slate-500 mb-1 font-medium">DOT</span>
+                    </div>
+                    {taxBalanceUsd && (
+                        <div className="mt-2 text-blue-400 text-sm font-medium">
+                            ≈ {taxBalanceUsd}
                         </div>
-                        <div className="text-lg font-semibold text-slate-200">
-                            {totalSent.toFixed(2)}
-                        </div>
+                    )}
+                    <div className="mt-3 pt-3 border-t border-white/5 grid grid-cols-3 gap-2 text-xs text-slate-500">
+                        <div>In: <span className="text-emerald-400">+{totalReceived.toFixed(2)}</span></div>
+                        <div>Out: <span className="text-slate-300">-{totalSent.toFixed(2)}</span></div>
+                        <div>Fees: <span className="text-red-400/60">-{totalFees.toFixed(4)}</span></div>
                     </div>
                 </div>
             </div>
 
-            {/* Chart Column */}
-            <div className="lg:col-span-2 p-6 bg-slate-900/50 border border-white/10 rounded-2xl flex flex-col">
+            {/* Balance History Chart */}
+            <div className="p-6 bg-slate-900/50 border border-white/10 rounded-2xl">
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-slate-200 font-semibold flex items-center gap-2">
                         <TrendingUp className="w-4 h-4 text-blue-400" />
-                        Balance History
+                        Transfer History
                     </h3>
                     <div className="text-xs text-slate-500 font-mono">
                         {events.length} Events
                     </div>
                 </div>
 
-                <div className="flex-grow w-full min-h-[200px]">
+                <div className="w-full h-[200px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={chartData}>
                             <defs>

@@ -10,13 +10,13 @@ export function generateCsv(events: OpenTxEvent[], mode: 'strict' | 'enriched'):
         'Sent Currency',
         'Fee Amount',
         'Fee Currency',
+        'Transaction Hash',
         'Notes'
     ];
 
     const enrichedHeaders = [
         'Chain',
         'Wallet',
-        'Tx Hash',
         'From',
         'To',
         'Tx Type',
@@ -40,6 +40,7 @@ export function generateCsv(events: OpenTxEvent[], mode: 'strict' | 'enriched'):
             event.sentCurrency,
             event.feeAmount,
             event.feeCurrency,
+            event.txHash,
             event.notes
         ];
 

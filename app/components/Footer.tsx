@@ -43,7 +43,7 @@ export function Footer() {
 
             <div className="w-full px-6 md:px-12 mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-xs text-slate-600">
                 <p>© {new Date().getFullYear()} OpenTx. All rights reserved.</p>
-                <p>Built for Awaken Tax compatibility.</p>
+                <p>Built for Tax compatibility.</p>
             </div>
         </footer>
     );

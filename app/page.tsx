@@ -126,14 +126,14 @@ export default function Home() {
 
       <main className="flex-grow pt-32 pb-24 px-6 md:px-12 w-full max-w-[1920px] mx-auto">
 
-        {/* Layout: Grid on Desktop */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+        {/* Layout: Single column on mobile, grid on desktop */}
+        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-12 lg:gap-24 items-center lg:items-start">
 
           {/* Left Column: Form & Hero */}
-          <div className="lg:col-span-5 space-y-12 lg:pl-8">
+          <div className="lg:col-span-5 space-y-12 lg:pl-8 w-full max-w-xl lg:max-w-none">
 
-            {/* Hero Text - Left Aligned */}
-            <div className="space-y-6 text-left">
+            {/* Hero Text - Centered on mobile, left on desktop */}
+            <div className="space-y-6 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold tracking-wide uppercase">
                 <Zap className="w-3 h-3" />
                 <span>v1.0 Now Live</span>
@@ -144,7 +144,7 @@ export default function Home() {
               </h1>
               <p className="text-lg text-slate-400 leading-relaxed max-w-lg">
                 The fastest way to export raw blockchain data for tax reporting.
-                Generate Awaken-compatible CSVs instantly without connecting your wallet.
+                Generate tax-ready CSVs instantly without connecting your wallet.
               </p>
             </div>
 
@@ -243,7 +243,7 @@ export default function Home() {
             {events.length > 0 ? (
               <div className="h-full flex flex-col space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
 
-                <Analytics events={events} chain={chain} />
+                <Analytics events={events} chain={chain} address={address} />
 
                 {/* Results Header */}
                 <div className="flex flex-wrap justify-between items-end gap-4">
