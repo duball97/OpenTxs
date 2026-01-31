@@ -6,25 +6,25 @@ const sans = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-sans' });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://opentx.vercel.app'),
+  metadataBase: new URL('https://www.opentxapp.xyz'),
   title: {
-    default: 'OpenTx | Blockchain to CSV Tax Export',
+    default: 'OpenTx | Polkadot Tax Export',
     template: '%s | OpenTx',
   },
-  description: 'Normalize and export Polkadot and blockchain transactions for Awaken Tax and accounting software. Private, open-source, and direct-to-chain.',
-  keywords: ['blockchain', 'tax', 'csv', 'polkadot', 'dot', 'awaken tax', 'crypto accounting', 'subscan'],
+  description: 'Export Polkadot (DOT) transaction history for tax reporting. Generate tax-ready CSVs compatible with Awaken Tax and other crypto tax software. Private, open-source, no wallet connection required.',
+  keywords: ['polkadot', 'dot', 'tax', 'csv', 'crypto accounting', 'subscan', 'opentx', 'awaken tax', 'blockchain'],
   authors: [{ name: 'duball97', url: 'https://x.com/duball97' }],
   openGraph: {
-    title: 'OpenTx | Blockchain Tax Export',
-    description: 'Export your blockchain history to perfectly formatted CSVs.',
-    url: 'https://opentx.vercel.app',
+    title: 'OpenTx | Polkadot Tax Export',
+    description: 'Export Polkadot transaction history to tax-ready CSVs. Fast, private, and compatible with Awaken Tax.',
+    url: 'https://www.opentxapp.xyz',
     siteName: 'OpenTx',
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'OpenTx',
+    title: 'OpenTx | Polkadot Tax Export',
     creator: '@duball97',
   },
 };

@@ -18,14 +18,15 @@
 
 ## 🚀 Overview
 
-**openTx** solves the fragmentation of crypto transaction history. It connects directly to blockchain indexers, fetches your complete history, normalizes it into a standard format, and exports CSVs ready for tax software like **Awaken**.
+**openTx** is the fastest way to export **Polkadot** transaction history for tax reporting. It connects directly to Subscan, fetches your complete DOT transaction history, and exports tax-ready CSVs compatible with leading crypto tax software.
 
 ### Key Features
 
-*   **⚡️ Direct-to-Chain**: Fetches data from reliable indexers (like Subscan), bypassing limited RPC nodes.
-*   **🔒 Privacy First**: Client-side heavy. No wallet connection required—just paste a public address. Your keys never leave your possession.
-*   **Tax Ready**: One-click export to **Awaken Tax** compatible CSVs.
-*   **🔍 Enriched Metadata**: Toggle "Enriched Mode" to include transaction hashes, block heights, and explorer links for manual audit trails.
+*   **⚡️ Polkadot Native**: Built specifically for Polkadot (DOT) using Subscan's reliable indexer.
+*   **🔒 Privacy First**: No wallet connection required—just paste your public address. Your keys never leave your possession.
+*   **💰 Tax Ready**: One-click export to **Awaken Tax** compatible CSVs with proper date formatting and transaction categorization.
+*   **📊 Dual Balance Display**: See both your on-chain balance and tax-relevant balance (transfer-derived).
+*   **🔍 Clean Data**: Exports only meaningful transfers by default—no noise from system extrinsics or failed transactions.
 
 ---
 

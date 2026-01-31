@@ -121,7 +121,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col font-sans selection:bg-blue-500/30">
+    <div className="min-h-screen bg-slate-950 flex flex-col font-sans selection:bg-pink-500/30">
       <Header />
 
       <main className="flex-grow pt-32 pb-24 px-6 md:px-12 w-full max-w-[1920px] mx-auto">
@@ -134,18 +134,35 @@ export default function Home() {
 
             {/* Hero Text - Centered on mobile, left on desktop */}
             <div className="space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold tracking-wide uppercase">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-xs font-semibold tracking-wide uppercase">
                 <Zap className="w-3 h-3" />
                 <span>v1.0 Now Live</span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1]">
                 Transactions, <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Simplified.</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Simplified.</span>
               </h1>
               <p className="text-lg text-slate-400 leading-relaxed max-w-lg">
-                The fastest way to export raw blockchain data for tax reporting.
+                Export Polkadot transaction history for tax reporting.
                 Generate tax-ready CSVs instantly without connecting your wallet.
               </p>
+
+              {/* Polkadot Badge */}
+              <div className="flex items-center gap-3 justify-center lg:justify-start pt-2">
+                <span className="text-xs text-slate-600 uppercase tracking-wider">Powered by</span>
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-900/50 border border-white/10 rounded-lg">
+                  <svg className="w-5 h-5" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="14" fill="#E6007A" />
+                    <circle cx="16" cy="9" r="2.5" fill="white" />
+                    <circle cx="23" cy="13" r="2.5" fill="white" />
+                    <circle cx="23" cy="19" r="2.5" fill="white" />
+                    <circle cx="16" cy="23" r="2.5" fill="white" />
+                    <circle cx="9" cy="19" r="2.5" fill="white" />
+                    <circle cx="9" cy="13" r="2.5" fill="white" />
+                  </svg>
+                  <span className="text-sm font-semibold text-white">Polkadot</span>
+                </div>
+              </div>
             </div>
 
             {/* Input Form - Clean & Minimal */}
@@ -157,7 +174,7 @@ export default function Home() {
                   <select
                     value={chain}
                     onChange={(e) => setChain(e.target.value)}
-                    className="w-full h-14 pl-4 pr-10 bg-slate-950 rounded-xl border border-transparent hover:border-white/10 focus:border-blue-500/50 outline-none text-slate-200 font-medium appearance-none transition-colors"
+                    className="w-full h-14 pl-4 pr-10 bg-slate-950 rounded-xl border border-transparent hover:border-white/10 focus:border-pink-500/50 outline-none text-slate-200 font-medium appearance-none transition-colors"
                   >
                     <option value="polkadot">Polkadot</option>
                     <option value="kusama" disabled>Kusama</option>
@@ -177,7 +194,7 @@ export default function Home() {
                     placeholder="Paste wallet address..."
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    className="w-full h-14 pl-12 pr-4 bg-slate-950 rounded-xl border border-transparent hover:border-white/10 focus:border-blue-500/50 outline-none text-slate-200 placeholder:text-slate-600 font-mono transition-colors"
+                    className="w-full h-14 pl-12 pr-4 bg-slate-950 rounded-xl border border-transparent hover:border-white/10 focus:border-pink-500/50 outline-none text-slate-200 placeholder:text-slate-600 font-mono transition-colors"
                   />
                 </div>
 
@@ -186,7 +203,7 @@ export default function Home() {
                   <button
                     type="submit"
                     disabled={!address}
-                    className="h-14 px-8 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 whitespace-nowrap"
+                    className="h-14 px-8 bg-pink-600 hover:bg-pink-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-all shadow-lg shadow-pink-500/25 flex items-center justify-center gap-2 whitespace-nowrap"
                   >
                     <span>Scan</span>
                     <ArrowRight className="w-5 h-5" />
@@ -209,7 +226,7 @@ export default function Home() {
                   {error ? (
                     <span className="text-red-400 flex items-center gap-2"><Info className="w-4 h-4" /> {error}</span>
                   ) : (
-                    <span className="text-blue-400 flex items-center gap-2">
+                    <span className="text-pink-400 flex items-center gap-2">
                       {loading && <Loader2 className="w-3 h-3 animate-spin" />}
                       {progress}
                     </span>
@@ -229,7 +246,7 @@ export default function Home() {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-slate-200 font-semibold">
-                  <CheckCircle className="w-5 h-5 text-blue-400" />
+                  <CheckCircle className="w-5 h-5 text-pink-400" />
                   <h3>Audit Ready</h3>
                 </div>
                 <p className="text-sm text-slate-500">Strict CSV mode ensures 100% compatibility with accounting tools.</p>
@@ -288,7 +305,7 @@ export default function Home() {
                             <td className="px-6 py-4 text-slate-500 font-mono text-xs whitespace-nowrap">{e.date.split(' ')[0]}</td>
                             <td className="px-6 py-4">
                               <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] uppercase font-bold tracking-wide ${e.txType === 'transfer'
-                                ? 'bg-blue-500/10 text-blue-400'
+                                ? 'bg-pink-500/10 text-pink-400'
                                 : 'bg-slate-800 text-slate-400'
                                 }`}>
                                 {e.txType}
@@ -305,7 +322,7 @@ export default function Home() {
                               <a
                                 href={e.explorerUrl}
                                 target="_blank"
-                                className="text-slate-600 hover:text-blue-400 transition-colors"
+                                className="text-slate-600 hover:text-pink-400 transition-colors"
                               >
                                 {e.txHash?.substring(0, 6)}...
                               </a>
@@ -332,6 +349,87 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {/* Awaken Tax Recommendation Section */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900/50 to-slate-950 py-24 px-6 md:px-12">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(229,1,121,0.1),transparent_70%)]" />
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8">
+
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold tracking-wide uppercase">
+            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+            Recommended Partner
+          </div>
+
+          {/* Headline */}
+          <div className="space-y-4">
+            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight flex flex-wrap items-center justify-center gap-4">
+              <span>Import your CSV to</span>
+              <span className="inline-flex items-center gap-3">
+                <svg className="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 200 200" fill="none">
+                  <circle cx="100" cy="100" r="90" fill="#10B981" />
+                  <path d="M70 90 L90 110 L130 70" stroke="white" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                </svg>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Awaken Tax</span>
+              </span>
+            </h2>
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+              30,000+ crypto traders use Awaken Tax to save time & money.
+              Built for DeFi power users with support for 10,000+ dApps across 55+ countries.
+            </p>
+          </div>
+
+          {/* Features */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
+            <div className="p-6 bg-slate-900/50 border border-white/10 rounded-2xl text-left">
+              <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="font-semibold text-white mb-2">Fast & Accurate</h3>
+              <p className="text-sm text-slate-500">Process thousands of transactions in minutes with industry-leading cost-basis accuracy.</p>
+            </div>
+
+            <div className="p-6 bg-slate-900/50 border border-white/10 rounded-2xl text-left">
+              <div className="w-10 h-10 bg-pink-500/10 rounded-xl flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              </div>
+              <h3 className="font-semibold text-white mb-2">Human Support</h3>
+              <p className="text-sm text-slate-500">Get help from crypto-native experts who understand complex onchain activity.</p>
+            </div>
+
+            <div className="p-6 bg-slate-900/50 border border-white/10 rounded-2xl text-left">
+              <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <h3 className="font-semibold text-white mb-2">55+ Countries</h3>
+              <p className="text-sm text-slate-500">Generate tax forms for US, UK, Canada, Australia, Germany and 50+ more countries.</p>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="pt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a
+              href="https://awaken.tax/signup?ref=3kb7cugk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-emerald-500/20"
+            >
+              Try Awaken Tax Free
+              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+            <span className="text-sm text-slate-500">No credit card required</span>
+          </div>
+        </div>
+      </section>
 
       <Footer />
     </div>
