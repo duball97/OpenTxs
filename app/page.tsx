@@ -146,12 +146,12 @@ export default function Home() {
                 <span>v1.0 Now Live</span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1]">
-                Transactions, <br />
-                <span className="text-[#e50179]">Simplified.</span>
+                Transactions <br />
+                <span className="text-[#e50179]">simplified on Polkadot</span>
               </h1>
               <p className="text-lg text-slate-400 leading-relaxed max-w-lg">
-                Export Polkadot transaction history for tax reporting.
-                Generate tax-ready CSVs instantly without connecting your wallet.
+                Export your Polkadot transaction history for tax reporting and accounting.
+                Generate CSVs instantly without connecting your wallet.
               </p>
 
               {/* Polkadot Badge */}
