@@ -30,6 +30,8 @@ export default function Home() {
     setError(null);
     setEvents([]);
     setProgress('Initializing connection...');
+    setCurrentPage(1);
+    setShowAll(false);
 
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -293,7 +295,7 @@ export default function Home() {
                 </div>
 
                 {/* Table Container */}
-                <div className="flex-grow bg-slate-900/50 border border-white/10 rounded-2xl overflow-hidden shadow-2xl min-h-[300px]">
+                <div className="flex-grow bg-slate-900/50 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
                   {/* Scrollable Table Area */}
                   <div className="max-h-[400px] overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
                     <table className="w-full text-left text-sm">
@@ -306,7 +308,7 @@ export default function Home() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/5">
-                        {events.map((e, i) => (
+                        {(showAll ? events : events.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)).map((e, i) => (
                           <tr key={i} className="group hover:bg-white/5 transition-colors">
                             <td className="px-6 py-4 text-slate-500 font-mono text-xs whitespace-nowrap">{e.date.split(' ')[0]}</td>
                             <td className="px-6 py-4">
@@ -338,6 +340,49 @@ export default function Home() {
                       </tbody>
                     </table>
                   </div>
+
+                  {/* Pagination Controls */}
+                  {!showAll && events.length > ITEMS_PER_PAGE && (
+                    <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between bg-slate-950/50">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                          disabled={currentPage === 1}
+                          className="p-2 rounded-lg border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <span className="text-sm text-slate-400 px-2">
+                          Page {currentPage} of {Math.ceil(events.length / ITEMS_PER_PAGE)}
+                        </span>
+                        <button
+                          onClick={() => setCurrentPage(p => Math.min(Math.ceil(events.length / ITEMS_PER_PAGE), p + 1))}
+                          disabled={currentPage >= Math.ceil(events.length / ITEMS_PER_PAGE)}
+                          className="p-2 rounded-lg border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => setShowAll(true)}
+                        className="text-sm text-[#e50179] hover:underline"
+                      >
+                        Show All ({events.length})
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Show Less Button when showing all */}
+                  {showAll && events.length > ITEMS_PER_PAGE && (
+                    <div className="px-6 py-4 border-t border-white/10 flex justify-end bg-slate-950/50">
+                      <button
+                        onClick={() => { setShowAll(false); setCurrentPage(1); }}
+                        className="text-sm text-slate-400 hover:text-white"
+                      >
+                        Show Less
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (
