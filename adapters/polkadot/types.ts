@@ -40,3 +40,10 @@ export interface SubscanExtrinsicsData {
     count: number;
     extrinsics: SubscanExtrinsic[] | null;
 }
+export interface SubscanAccountData {
+    address: string;
+    balance: string;
+    reserved: string;
+    lock: string;
+    locked?: string;
+}

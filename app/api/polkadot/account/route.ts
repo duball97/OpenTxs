@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { fetchAccount } from '@/adapters/polkadot/subscan';
+import { SUPPORTED_CHAINS } from '@/lib/chains';
 
-const BASE_URL = 'https://polkadot.api.subscan.io';
 const DOT_DECIMALS = 10;
 
 function formatDot(plancks: string): string {
@@ -19,9 +20,9 @@ function formatDot(plancks: string): string {
     }
 }
 
-// Cache for account data (30s TTL)
+// Cache for account data (10s TTL for account state)
 const accountCache = new Map<string, { data: any; timestamp: number }>();
-const CACHE_TTL = 30 * 1000; // 30 seconds
+const CACHE_TTL = 10 * 1000; // 10 seconds
 
 export const dynamic = 'force-dynamic';
 
@@ -37,44 +38,38 @@ export type PolkadotAccountState = {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { address } = body;
+        const { address, chain = 'polkadot' } = body;
 
         if (!address) {
             return NextResponse.json({ error: 'Address is required' }, { status: 400 });
         }
 
+        const chainConfig = SUPPORTED_CHAINS.find(c => c.id === chain);
+        if (!chainConfig) {
+            return NextResponse.json({ error: `Unsupported chain: ${chain}` }, { status: 400 });
+        }
+
+        const cacheKey = `${chain}:${address}`;
         // Check cache
-        const cached = accountCache.get(address);
+        const cached = accountCache.get(cacheKey);
         if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
             return NextResponse.json(cached.data);
         }
 
-        const apiKey = process.env.SUBSCAN_API_KEY;
+        const account = await fetchAccount(address, chainConfig.subscanHost);
 
-        // Fetch account info from Subscan
-        const response = await fetch(`${BASE_URL}/api/v2/scan/account`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(apiKey ? { 'X-API-Key': apiKey } : {}),
-            },
-            body: JSON.stringify({ address }),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Subscan API error: ${response.status}`);
+        // If account data unavailable, return a graceful response
+        if (!account) {
+            return NextResponse.json({
+                error: 'Account balance unavailable for this network',
+                freeDot: null,
+                reservedDot: null,
+                lockedDot: null,
+                totalDot: null,
+            });
         }
-
-        const json = await response.json();
-
-        if (json.code !== 0) {
-            throw new Error(json.message || 'Subscan API error');
-        }
-
-        const account = json.data;
 
         // Extract balance fields from Subscan response
-        // Subscan returns balance in planck format
         const freeDot = formatDot(account.balance || '0');
         const reservedDot = formatDot(account.reserved || '0');
         const lockedDot = formatDot(account.lock || account.locked || '0');
@@ -94,7 +89,7 @@ export async function POST(req: NextRequest) {
         };
 
         // Cache result
-        accountCache.set(address, { data: result, timestamp: Date.now() });
+        accountCache.set(cacheKey, { data: result, timestamp: Date.now() });
 
         return NextResponse.json(result);
 

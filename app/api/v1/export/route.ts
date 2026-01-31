@@ -3,18 +3,20 @@ import { fetchTransfers, fetchExtrinsics } from '@/adapters/polkadot/subscan';
 import { normalizeTransfer, normalizeExtrinsic } from '@/adapters/polkadot/normalize';
 import { OpenTxEvent } from '@/lib/types';
 import { generateCsv } from '@/csv/awaken';
+import { SUPPORTED_CHAINS } from '@/lib/chains';
 
 export const dynamic = 'force-dynamic'; // Prevent caching so we get fresh data
 export const maxDuration = 60; // Allow 60s for fetching multiple pages (Vercel Pro/Hobby limits apply)
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
-    const chain = searchParams.get('chain');
+    const chain = searchParams.get('chain') || 'polkadot';
     const address = searchParams.get('address');
     const format = searchParams.get('format') || 'json'; // json | csv
 
-    if (!chain || chain !== 'polkadot') {
-        return NextResponse.json({ error: 'Invalid or missing chain. Only "polkadot" is supported.' }, { status: 400 });
+    const chainConfig = SUPPORTED_CHAINS.find(c => c.id === chain);
+    if (!chainConfig) {
+        return NextResponse.json({ error: `Unsupported chain: ${chain}.` }, { status: 400 });
     }
 
     if (!address) {
@@ -29,10 +31,11 @@ export async function GET(req: NextRequest) {
         let hasMoreExtrinsics = true;
         const ROW_LIMIT = 100;
         const MAX_PAGES = 5; // Safety cap to prevent timeouts
+        const subscanHost = chainConfig.subscanHost;
 
         // Fetch Transfers Loop
         while (hasMoreTransfers && transfersPage < MAX_PAGES) {
-            const tData = await fetchTransfers(address, transfersPage, ROW_LIMIT);
+            const tData = await fetchTransfers(address, transfersPage, subscanHost, ROW_LIMIT);
             if (tData.transfers && tData.transfers.length > 0) {
                 const normalized = tData.transfers.map(t => normalizeTransfer(t, address));
                 allEvents = [...allEvents, ...normalized];
@@ -45,7 +48,7 @@ export async function GET(req: NextRequest) {
 
         // Fetch Extrinsics Loop
         while (hasMoreExtrinsics && extrinsicsPage < MAX_PAGES) {
-            const eData = await fetchExtrinsics(address, extrinsicsPage, ROW_LIMIT);
+            const eData = await fetchExtrinsics(address, extrinsicsPage, subscanHost, ROW_LIMIT);
             if (eData.extrinsics && eData.extrinsics.length > 0) {
                 const normalized = eData.extrinsics.map(e => normalizeExtrinsic(e, address));
                 allEvents = [...allEvents, ...normalized];

@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { OpenTxEvent } from '@/lib/types';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { TrendingUp, Wallet, DollarSign, ArrowUpRight, ArrowDownRight, Info, HelpCircle, RefreshCw } from 'lucide-react';
+import { SUPPORTED_CHAINS } from '@/lib/chains';
 
 interface AnalyticsProps {
     events: OpenTxEvent[];
@@ -28,7 +29,19 @@ export function Analytics({ events, chain, address }: AnalyticsProps) {
     useEffect(() => {
         const fetchPrice = async () => {
             try {
-                const coinId = chain === 'polkadot' ? 'polkadot' : 'kusama';
+                // Mapping some common chains to CoinGecko IDs, fallback to polkadot
+                const geckoMap: Record<string, string> = {
+                    'polkadot': 'polkadot',
+                    'kusama': 'kusama',
+                    'astar': 'astar',
+                    'acala': 'acala',
+                    'moonbeam': 'moonbeam',
+                    'moonriver': 'moonriver',
+                    'hydration': 'hydradx',
+                    'phala': 'phala-network',
+                    'centrifuge': 'centrifuge',
+                };
+                const coinId = geckoMap[chain] || 'polkadot';
                 const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`);
                 const data = await res.json();
                 setPrice(data[coinId]?.usd || null);
@@ -48,7 +61,7 @@ export function Analytics({ events, chain, address }: AnalyticsProps) {
             const res = await fetch('/api/polkadot/account', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ address }),
+                body: JSON.stringify({ address, chain }),
             });
             const data = await res.json();
             if (data.error && !data.totalDot) {
@@ -143,7 +156,7 @@ export function Analytics({ events, chain, address }: AnalyticsProps) {
                     ) : accountError ? (
                         <div className="space-y-2">
                             <span className="text-slate-500 text-sm">Unavailable</span>
-                            <button onClick={fetchAccountState} className="text-xs text-blue-400 hover:underline flex items-center gap-1">
+                            <button onClick={fetchAccountState} className="text-xs text-[#e50179] hover:underline flex items-center gap-1">
                                 <RefreshCw className="w-3 h-3" /> Retry
                             </button>
                         </div>
@@ -151,7 +164,7 @@ export function Analytics({ events, chain, address }: AnalyticsProps) {
                         <>
                             <div className="text-3xl font-bold text-white tracking-tight flex items-end gap-2">
                                 {parseFloat(accountState.totalDot).toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                                <span className="text-sm text-slate-500 mb-1 font-medium">DOT</span>
+                                <span className="text-sm text-slate-500 mb-1 font-medium">{SUPPORTED_CHAINS.find(c => c.id === chain)?.symbol || 'DOT'}</span>
                             </div>
                             {currentBalanceUsd && (
                                 <div className="mt-2 text-emerald-400 text-sm font-medium">
@@ -169,7 +182,7 @@ export function Analytics({ events, chain, address }: AnalyticsProps) {
                 </div>
 
                 {/* Tax-Relevant Balance (Transfer-derived) */}
-                <div className="p-6 bg-slate-900/50 border border-blue-500/20 rounded-2xl relative overflow-hidden group">
+                <div className="p-6 bg-slate-900/50 border-[#e50179]/20 border rounded-2xl relative overflow-hidden group">
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
                             <h3 className="text-slate-300 text-sm font-medium">Tax-Relevant Balance</h3>
@@ -180,15 +193,15 @@ export function Analytics({ events, chain, address }: AnalyticsProps) {
                                 </div>
                             </div>
                         </div>
-                        <span className="text-[10px] text-blue-400 uppercase tracking-wider">CSV-based</span>
+                        <span className="text-[10px] text-[#e50179] uppercase tracking-wider">CSV-based</span>
                     </div>
 
                     <div className="text-3xl font-bold text-white tracking-tight flex items-end gap-2">
                         {taxBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                        <span className="text-sm text-slate-500 mb-1 font-medium">DOT</span>
+                        <span className="text-sm text-slate-500 mb-1 font-medium">{SUPPORTED_CHAINS.find(c => c.id === chain)?.symbol || 'DOT'}</span>
                     </div>
                     {taxBalanceUsd && (
-                        <div className="mt-2 text-blue-400 text-sm font-medium">
+                        <div className="mt-2 text-[#e50179] text-sm font-medium">
                             ≈ {taxBalanceUsd}
                         </div>
                     )}
@@ -204,7 +217,7 @@ export function Analytics({ events, chain, address }: AnalyticsProps) {
             <div className="p-6 bg-slate-900/50 border border-white/10 rounded-2xl">
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-slate-200 font-semibold flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-blue-400" />
+                        <TrendingUp className="w-4 h-4 text-[#e50179]" />
                         Transfer History
                     </h3>
                     <div className="text-xs text-slate-500 font-mono">
@@ -215,12 +228,6 @@ export function Analytics({ events, chain, address }: AnalyticsProps) {
                 <div className="w-full h-[200px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={chartData}>
-                            <defs>
-                                <linearGradient id="colorBal" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
                             <XAxis
                                 dataKey="date"
                                 stroke="#475569"
@@ -238,16 +245,16 @@ export function Analytics({ events, chain, address }: AnalyticsProps) {
                             />
                             <Tooltip
                                 contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', borderRadius: '8px', fontSize: '12px' }}
-                                itemStyle={{ color: '#bae6fd' }}
+                                itemStyle={{ color: '#e50179' }}
                                 labelStyle={{ color: '#94a3b8', marginBottom: '4px' }}
                             />
                             <Area
                                 type="monotone"
                                 dataKey="balance"
-                                stroke="#3b82f6"
+                                stroke="#e50179"
                                 strokeWidth={2}
-                                fillOpacity={1}
-                                fill="url(#colorBal)"
+                                fillOpacity={0.1}
+                                fill="#e50179"
                             />
                         </AreaChart>
                     </ResponsiveContainer>

@@ -6,6 +6,7 @@ import { generateCsv } from '@/csv/awaken';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { Analytics } from './components/Analytics';
+import { SUPPORTED_CHAINS } from '@/lib/chains';
 import { Search, ArrowRight, Loader2, Download, CheckCircle, Info, ShieldCheck, Zap } from 'lucide-react';
 
 export default function Home() {
@@ -46,7 +47,7 @@ export default function Home() {
         const res: Response = await fetch('/api/polkadot/txs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ address, cursor: nextCursor }),
+          body: JSON.stringify({ address, cursor: nextCursor, chain }),
           signal: ac.signal,
         });
 
@@ -140,7 +141,7 @@ export default function Home() {
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1]">
                 Transactions, <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">Simplified.</span>
+                <span className="text-[#e50179]">Simplified.</span>
               </h1>
               <p className="text-lg text-slate-400 leading-relaxed max-w-lg">
                 Export Polkadot transaction history for tax reporting.
@@ -176,8 +177,9 @@ export default function Home() {
                     onChange={(e) => setChain(e.target.value)}
                     className="w-full h-14 pl-4 pr-10 bg-slate-950 rounded-xl border border-transparent hover:border-white/10 focus:border-pink-500/50 outline-none text-slate-200 font-medium appearance-none transition-colors"
                   >
-                    <option value="polkadot">Polkadot</option>
-                    <option value="kusama" disabled>Kusama</option>
+                    {SUPPORTED_CHAINS.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
                   </select>
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
@@ -351,8 +353,8 @@ export default function Home() {
       </main>
 
       {/* Awaken Tax Recommendation Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900/50 to-slate-950 py-24 px-6 md:px-12">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(229,1,121,0.1),transparent_70%)]" />
+      <section className="relative overflow-hidden bg-slate-950 py-24 px-6 md:px-12">
+        <div className="absolute inset-0 bg-[#e50179]/5" />
 
         <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8">
 
@@ -371,7 +373,7 @@ export default function Home() {
                   <circle cx="100" cy="100" r="90" fill="#e50179" />
                   <path d="M70 90 L90 110 L130 70" stroke="white" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                 </svg>
-                <span className="text-pink-500">Awaken Tax</span>
+                <span className="text-[#e50179]">Awaken Tax</span>
               </span>
             </h2>
             <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
@@ -419,7 +421,7 @@ export default function Home() {
               href="https://awaken.tax/signup?ref=3kb7cugk"
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 px-8 py-4 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-pink-500/20"
+              className="group flex items-center gap-3 px-8 py-4 bg-[#e50179] hover:opacity-90 text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-[#e50179]/20"
             >
               Try Awaken Tax Free
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,6 +1,6 @@
-import { SubscanResponse, SubscanTransfersData, SubscanExtrinsicsData } from './types';
+import { SubscanResponse, SubscanTransfersData, SubscanExtrinsicsData, SubscanAccountData } from './types';
 
-const BASE_URL = 'https://polkadot.api.subscan.io';
+// Removed global BASE_URL to support dynamic networks
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -37,9 +37,9 @@ async function fetchWithRetry(url: string, options: RequestInit, retries = 3): P
     }
 }
 
-export async function fetchTransfers(address: string, page: number, row: number = 100): Promise<SubscanTransfersData> {
+export async function fetchTransfers(address: string, page: number, subscanHost: string, row: number = 100): Promise<SubscanTransfersData> {
     const apiKey = process.env.SUBSCAN_API_KEY;
-    const response = await fetchWithRetry(`${BASE_URL}/api/v2/scan/transfers`, {
+    const response = await fetchWithRetry(`https://${subscanHost}/api/v2/scan/transfers`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -65,9 +65,9 @@ export async function fetchTransfers(address: string, page: number, row: number 
     return result.data || { count: 0, transfers: [] };
 }
 
-export async function fetchExtrinsics(address: string, page: number, row: number = 100): Promise<SubscanExtrinsicsData> {
+export async function fetchExtrinsics(address: string, page: number, subscanHost: string, row: number = 100): Promise<SubscanExtrinsicsData> {
     const apiKey = process.env.SUBSCAN_API_KEY;
-    const response = await fetchWithRetry(`${BASE_URL}/api/v2/scan/extrinsics`, {
+    const response = await fetchWithRetry(`https://${subscanHost}/api/v2/scan/extrinsics`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -91,4 +91,35 @@ export async function fetchExtrinsics(address: string, page: number, row: number
     }
 
     return result.data || { count: 0, extrinsics: [] };
+}
+export async function fetchAccount(address: string, subscanHost: string): Promise<SubscanAccountData | null> {
+    const apiKey = process.env.SUBSCAN_API_KEY;
+
+    try {
+        const response = await fetchWithRetry(`https://${subscanHost}/api/scan/account`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(apiKey ? { 'X-API-Key': apiKey } : {}),
+            },
+            body: JSON.stringify({ key: address }),
+        });
+
+        if (!response.ok) {
+            console.warn(`Subscan account API unavailable (${response.status}). Balance display disabled.`);
+            return null;
+        }
+
+        const result = (await response.json()) as SubscanResponse<SubscanAccountData>;
+
+        if (result.code !== 0 || !result.data) {
+            console.warn(`Subscan account API returned no data. Balance display disabled.`);
+            return null;
+        }
+
+        return result.data;
+    } catch (error) {
+        console.warn('Subscan account fetch failed:', error);
+        return null;
+    }
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fetchTransfers } from '../../../../adapters/polkadot/subscan';
 import { normalizeTransfer } from '../../../../adapters/polkadot/normalize';
 import { OpenTxEvent } from '../../../../lib/types';
+import { SUPPORTED_CHAINS } from '../../../../lib/chains';
 
 // Force dynamic to prevent caching issues 
 export const dynamic = 'force-dynamic';
@@ -9,11 +10,18 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { address, cursor } = body;
+        const { address, cursor, chain = 'polkadot' } = body;
 
         if (!address) {
             return NextResponse.json({ error: 'Address is required' }, { status: 400 });
         }
+
+        const chainConfig = SUPPORTED_CHAINS.find(c => c.id === chain);
+        if (!chainConfig) {
+            return NextResponse.json({ error: `Unsupported chain: ${chain}` }, { status: 400 });
+        }
+
+        const subscanHost = chainConfig.subscanHost;
 
         // Cursor format: "transfers:page" e.g. "transfers:0"
         // We now ONLY fetch transfers (no extrinsics), as per user requirement:
@@ -28,7 +36,7 @@ export async function POST(req: NextRequest) {
         let nextCursor: string | null = null;
 
         if (phase === 'transfers') {
-            const data = await fetchTransfers(address, page, row);
+            const data = await fetchTransfers(address, page, subscanHost, row);
             const transfers = data.transfers || [];
 
             // Only include successful transfers that actually moved value

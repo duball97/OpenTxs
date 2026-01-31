@@ -11,7 +11,7 @@ export function Footer() {
                     <img
                         src="/logo.png"
                         alt="OpenTx Logo"
-                        className="h-8 w-auto object-contain brightness-0 invert opacity-80"
+                        className="h-12 w-auto object-contain brightness-0 invert opacity-80"
                     />
                     <p className="text-sm leading-relaxed max-w-xs text-slate-500">
                         The professional standard for blockchain transaction normalization. Open-source, private, and built for tax compliance.
