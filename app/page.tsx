@@ -357,8 +357,8 @@ export default function Home() {
         <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8">
 
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold tracking-wide uppercase">
-            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-xs font-semibold tracking-wide uppercase">
+            <span className="w-2 h-2 bg-pink-400 rounded-full animate-pulse" />
             Recommended Partner
           </div>
 
@@ -368,10 +368,10 @@ export default function Home() {
               <span>Import your CSV to</span>
               <span className="inline-flex items-center gap-3">
                 <svg className="w-10 h-10 md:w-12 md:h-12" viewBox="0 0 200 200" fill="none">
-                  <circle cx="100" cy="100" r="90" fill="#10B981" />
+                  <circle cx="100" cy="100" r="90" fill="#e50179" />
                   <path d="M70 90 L90 110 L130 70" stroke="white" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                 </svg>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Awaken Tax</span>
+                <span className="text-pink-500">Awaken Tax</span>
               </span>
             </h2>
             <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
@@ -383,8 +383,8 @@ export default function Home() {
           {/* Features */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
             <div className="p-6 bg-slate-900/50 border border-white/10 rounded-2xl text-left">
-              <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-4">
-                <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-10 h-10 bg-pink-500/10 rounded-xl flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
@@ -403,8 +403,8 @@ export default function Home() {
             </div>
 
             <div className="p-6 bg-slate-900/50 border border-white/10 rounded-2xl text-left">
-              <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center mb-4">
-                <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-10 h-10 bg-pink-500/10 rounded-xl flex items-center justify-center mb-4">
+                <svg className="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
@@ -419,7 +419,7 @@ export default function Home() {
               href="https://awaken.tax/signup?ref=3kb7cugk"
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-emerald-500/20"
+              className="group flex items-center gap-3 px-8 py-4 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-pink-500/20"
             >
               Try Awaken Tax Free
               <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
