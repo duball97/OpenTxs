@@ -1,6 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0f172a;
+  --color-foreground: #f1f5f9;
+}
+
+/* 
+  Fallback/Overrides if needed. 
+  In v4, we use standard CSS variables. 
+  But the theme directive maps them effectively. 
+*/
 
 :root {
   --background: #0f172a;
