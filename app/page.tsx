@@ -7,7 +7,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { Analytics } from './components/Analytics';
 import { SUPPORTED_CHAINS } from '@/lib/chains';
-import { Search, ArrowRight, Loader2, Download, CheckCircle, Info, ShieldCheck, Zap } from 'lucide-react';
+import { Search, ArrowRight, Loader2, Download, CheckCircle, Info, ShieldCheck, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function Home() {
   const [address, setAddress] = useState('');
@@ -16,6 +16,9 @@ export default function Home() {
   const [progress, setProgress] = useState('');
   const [events, setEvents] = useState<OpenTxEvent[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showAll, setShowAll] = useState(false);
+  const ITEMS_PER_PAGE = 20;
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -67,19 +70,20 @@ export default function Home() {
 
       setProgress('Normalizing data...');
 
-      // Dedup
+      // Dedup using composite key: hash + from + to + amounts
+      // This preserves distinct transfers that share the same txHash (e.g., staking rewards)
       const uniqueMap = new Map<string, OpenTxEvent>();
       for (const e of currentEvents) {
-        if (!e.txHash) {
-          uniqueMap.set(Math.random().toString(), e);
-          continue;
-        }
-        const existing = uniqueMap.get(e.txHash);
+        // Create a unique key from transfer details, not just hash
+        const key = `${e.txHash || Math.random()}_${e.from || ''}_${e.to || ''}_${e.receivedQty || ''}_${e.sentQty || ''}`;
+
+        const existing = uniqueMap.get(key);
         if (!existing) {
-          uniqueMap.set(e.txHash, e);
+          uniqueMap.set(key, e);
         } else {
+          // Prefer transfer over fee-only entries
           if (existing.txType === 'fee' && e.txType === 'transfer') {
-            uniqueMap.set(e.txHash, e);
+            uniqueMap.set(key, e);
           }
         }
       }
@@ -289,9 +293,9 @@ export default function Home() {
                 </div>
 
                 {/* Table Container */}
-                <div className="flex-grow bg-slate-900/50 border border-white/10 rounded-2xl overflow-hidden relative shadow-2xl">
+                <div className="flex-grow bg-slate-900/50 border border-white/10 rounded-2xl overflow-hidden shadow-2xl min-h-[300px]">
                   {/* Scrollable Table Area */}
-                  <div className="absolute inset-0 overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+                  <div className="max-h-[400px] overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
                     <table className="w-full text-left text-sm">
                       <thead className="bg-slate-950/80 backdrop-blur-md sticky top-0 z-10 border-b border-white/10">
                         <tr>

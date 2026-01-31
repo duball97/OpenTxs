@@ -32,7 +32,7 @@ function formatDate(timestamp: number): string {
     return `${mm}/${dd}/${yyyy} ${hh}:${min}:${ss}`;
 }
 
-export function normalizeTransfer(t: SubscanTransfer, walletAddress: string): OpenTxEvent {
+export function normalizeTransfer(t: SubscanTransfer, walletAddress: string, explorerHost: string = 'polkadot.subscan.io'): OpenTxEvent {
     const isReceived = t.to.toLowerCase() === walletAddress.toLowerCase();
     const isSent = t.from.toLowerCase() === walletAddress.toLowerCase();
 
@@ -59,7 +59,7 @@ export function normalizeTransfer(t: SubscanTransfer, walletAddress: string): Op
         to: t.to,
         txType: 'transfer',
         blockHeight: t.block_num.toString(),
-        explorerUrl: `https://polkadot.subscan.io/extrinsic/${t.hash}`,
+        explorerUrl: `https://${explorerHost}/extrinsic/${t.hash}`,
         protocol: t.module,
     };
 
@@ -81,7 +81,7 @@ export function normalizeTransfer(t: SubscanTransfer, walletAddress: string): Op
     return event;
 }
 
-export function normalizeExtrinsic(e: SubscanExtrinsic, walletAddress: string): OpenTxEvent {
+export function normalizeExtrinsic(e: SubscanExtrinsic, walletAddress: string, explorerHost: string = 'polkadot.subscan.io'): OpenTxEvent {
     const formattedFee = formatDot(e.fee);
 
     const event: OpenTxEvent = {
@@ -98,7 +98,7 @@ export function normalizeExtrinsic(e: SubscanExtrinsic, walletAddress: string): 
         txType: e.call_module === 'balances' && e.call_module_function.includes('transfer') ? 'transfer' : 'fee', // Basic classification
         protocol: e.call_module,
         blockHeight: e.block_num.toString(),
-        explorerUrl: `https://polkadot.subscan.io/extrinsic/${e.extrinsic_hash}`,
+        explorerUrl: `https://${explorerHost}/extrinsic/${e.extrinsic_hash}`,
     };
 
     if (!e.success) {

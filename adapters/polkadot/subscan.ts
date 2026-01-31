@@ -102,7 +102,7 @@ export async function fetchAccount(address: string, subscanHost: string): Promis
                 'Content-Type': 'application/json',
                 ...(apiKey ? { 'X-API-Key': apiKey } : {}),
             },
-            body: JSON.stringify({ key: address }),
+            body: JSON.stringify({ address }),
         });
 
         if (!response.ok) {

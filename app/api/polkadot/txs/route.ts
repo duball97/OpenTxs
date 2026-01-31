@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
         }
 
         const subscanHost = chainConfig.subscanHost;
+        const explorerHost = chainConfig.explorerHost;
 
         // Cursor format: "transfers:page" e.g. "transfers:0"
         // We now ONLY fetch transfers (no extrinsics), as per user requirement:
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
 
             // Only include successful transfers that actually moved value
             const validTransfers = transfers.filter(t => t.success);
-            events = validTransfers.map(t => normalizeTransfer(t, address));
+            events = validTransfers.map(t => normalizeTransfer(t, address, explorerHost));
 
             // Determine next cursor
             if (transfers.length === row) {
