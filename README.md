@@ -39,6 +39,34 @@
 
 ---
 
+## 🔌 Public API
+
+OpenTx provides a free, public API for developers to fetch normalized transaction data.
+
+### Endpoint
+`GET /api/v1/export`
+
+### Parameters
+| Param | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `chain` | string | Yes | Only `polkadot` currently supported. |
+| `address` | string | Yes | The wallet address to fetch. |
+| `format` | string | No | `json` (default) or `csv`. |
+
+### Examples
+
+**Fetch JSON:**
+```bash
+curl "https://opentx.vercel.app/api/v1/export?chain=polkadot&address=15...&format=json"
+```
+
+**Download CSV:**
+```bash
+curl -o history.csv "https://opentx.vercel.app/api/v1/export?chain=polkadot&address=15...&format=csv"
+```
+
+---
+
 ## 🛠 Tech Stack
 
 *   **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
