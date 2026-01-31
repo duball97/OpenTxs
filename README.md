@@ -1,61 +1,109 @@
-# openTx
+# Ox openTx
 
-Open-source web app to fetch transaction history from blockchains and export it as CSV compatible with Awaken Tax.
+<div align="center">
 
-**Live Demo:** [Vercel URL Here]
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-14-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+![Tailwind](https://img.shields.io/badge/Tailwind-3.0-cyan)
+![Status](https://img.shields.io/badge/Status-Beta-orange)
 
-## Features
+**The open-source bridge between your blockchain activity and tax reporting.**
 
-- **Chain Support:** Polkadot (more coming soon)
-- **Export Formats:**
-  - **Strict:** Compatible with Awaken Tax
-  - **Enriched:** Awaken columns + extra metadata (Hash, Wallet, Explorer Links)
-- **Privacy:** No wallet connection required. Just enter address.
+[Live Demo](https://opentx.vercel.app) • [Report Bug](https://github.com/duball/OpenTxs/issues) • [Request Feature](https://github.com/duball/OpenTxs/issues)
 
-## Supported Chains
+</div>
 
-| Chain    | Source  | Status |
-|----------|---------|--------|
-| Polkadot | Subscan | ✅ Live |
-| Kusama   | Subscan | 🚧     |
+---
 
-## Local Development
+## 🚀 Overview
 
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/duball/OpenTxs.git
-   cd OpenTxs
-   ```
+**openTx** solves the fragmentation of crypto transaction history. It connects directly to blockchain indexers, fetches your complete history, normalizes it into a standard format, and exports CSVs ready for tax software like **Awaken**.
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+### Key Features
 
-3. **Configure Environment**
-   ```bash
-   cp .env.example .env.local
-   ```
-   Edit `.env.local` and add your `SUBSCAN_API_KEY` (optional but recommended).
+*   **⚡️ Direct-to-Chain**: Fetches data from reliable indexers (like Subscan), bypassing limited RPC nodes.
+*   **🔒 Privacy First**: Client-side heavy. No wallet connection required—just paste a public address. Your keys never leave your possession.
+*   **Tax Ready**: One-click export to **Awaken Tax** compatible CSVs.
+*   **🔍 Enriched Metadata**: Toggle "Enriched Mode" to include transaction hashes, block heights, and explorer links for manual audit trails.
 
-4. **Run the app**
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000).
+---
 
-## How to add a new chain
+## ⛓ Supported Chains
 
-1. **Create Adapter:**
-   - Add `adapters/[chain]/index.ts` (API Client)
-   - Add `adapters/[chain]/normalize.ts` (Event Normalizer)
-   
-2. **Add API Route:**
-   - Create `app/api/[chain]/txs/route.ts`
-   
-3. **Update UI:**
-   - Add chain option in `app/page.tsx`
+| Chain | Symbol | Indexer | Status |
+| :--- | :--- | :--- | :--- |
+| **Polkadot** | DOT | Subscan | ✅ Live |
+| **Kusama** | KSM | Subscan | 🚧 Coming Soon |
+| **Ethereum** | ETH | Etherscan | 📝 Planned |
 
-## License
+---
 
-MIT
+## 🛠 Tech Stack
+
+*   **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+*   **Language**: [TypeScript](https://www.typescriptlang.org/)
+*   **Icons**: [Lucide React](https://lucide.dev/)
+
+---
+
+## 🏁 Getting Started
+
+### Prerequisites
+
+*   Node.js 18+
+*   npm or yarn
+
+### Installation
+
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/duball/OpenTxs.git
+    cd OpenTxs
+    ```
+
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
+
+3.  **Configure Environment** (Optional)
+    To increase rate limits, add your Subscan API key:
+    ```bash
+    cp .env.example .env.local
+    ```
+    Add your key:
+    ```env
+    SUBSCAN_API_KEY=your_key_here
+    ```
+
+4.  **Run Development Server**
+    ```bash
+    npm run dev
+    ```
+    Visit `http://localhost:3000`.
+
+---
+
+## 🤝 Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+<div align="center">
+  <p>Built with ❤️ for the decentralized world.</p>
+</div>
