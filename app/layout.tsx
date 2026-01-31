@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://opentxapp.xyz/social2.png',
+        url: 'https://opentxapp.xyz/social3.png',
         width: 1200,
         height: 630,
         alt: 'OpenTx Social Preview',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'OpenTx | Export your Polkadot Transactions',
     creator: '@duball97',
-    images: ['https://opentxapp.xyz/social2.png'],
+    images: ['https://opentxapp.xyz/social3.png'],
   },
 };
 
