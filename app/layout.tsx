@@ -21,11 +21,20 @@ export const metadata: Metadata = {
     siteName: 'OpenTx',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: '/social2.png',
+        width: 1200,
+        height: 630,
+        alt: 'OpenTx Social Preview',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'OpenTx | Polkadot Tax Export',
     creator: '@duball97',
+    images: ['/social2.png'],
   },
 };
 
