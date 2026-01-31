@@ -6,24 +6,24 @@ const sans = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-sans' });
 const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.opentxapp.xyz'),
+  metadataBase: new URL('https://opentxapp.xyz'),
   title: {
     default: 'OpenTx | Export your Polkadot Transactions',
     template: '%s | OpenTx',
   },
-  description: 'Export Polkadot (DOT) transaction history for tax reporting and accounting. Generate CSVs compatible with tax software. Private, open-source, no wallet connection required.',
+  description: 'Export your Polkadot transaction history to CSV. Fast, private, and compatible with tax software.',
   keywords: ['polkadot', 'dot', 'transactions', 'csv', 'crypto accounting', 'subscan', 'opentx', 'blockchain'],
   authors: [{ name: 'duball97', url: 'https://x.com/duball97' }],
   openGraph: {
     title: 'OpenTx | Export your Polkadot Transactions',
     description: 'Export your Polkadot transaction history to CSV. Fast, private, and compatible with tax software.',
-    url: 'https://www.opentxapp.xyz',
+    url: 'https://opentxapp.xyz',
     siteName: 'OpenTx',
     locale: 'en_US',
     type: 'website',
     images: [
       {
-        url: '/social2.png',
+        url: 'https://opentxapp.xyz/social2.png',
         width: 1200,
         height: 630,
         alt: 'OpenTx Social Preview',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'OpenTx | Export your Polkadot Transactions',
     creator: '@duball97',
-    images: ['/social2.png'],
+    images: ['https://opentxapp.xyz/social2.png'],
   },
 };
 
